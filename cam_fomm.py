@@ -92,13 +92,14 @@ def is_new_frame_better(fa, source, driving, device):
         display_string = "No face found!"
         return False
 
-def crop(img, p=0.7):
+def crop(img, dx=0, dy=0, p=0.7):
     h, w = img.shape[:2]
     x = int(min(w, h) * p)
-    l = (w - x) // 2
-    r = w - l
-    u = (h - x) // 2
-    d = h - u
+    margin = int(x*(1/p-1)/20)
+    l = (w - x) // 2 + margin*dx
+    r = w - l + 2*margin*dx
+    u = (h - x) // 2 + margin*dy
+    d = h - u + 2*margin*dy
     return img[u:d, l:r], (l,r,u,d)
 
 
@@ -207,6 +208,9 @@ if __name__ == "__main__":
 
     frame_proportion = 0.9
 
+    horizontal_offset = 0
+    vertical_offset = 0
+
     overlay_alpha = 0.0
     preview_flip = False
     output_flip = False
@@ -222,7 +226,7 @@ if __name__ == "__main__":
 
         frame_orig = frame.copy()
 
-        frame, lrud = crop(frame, p=frame_proportion)
+        frame, lrud = crop(frame, dx=horizontal_offset, dy=vertical_offset, p=frame_proportion)
         frame = resize(frame, (256, 256))[..., :3]
 
         if find_keyframe:
@@ -283,6 +287,14 @@ if __name__ == "__main__":
             change_avatar(fa, avatars[cur_ava])
         elif key == 48:
             passthrough = not passthrough
+        elif key == 105:#i(up)
+            vertical_offset = vertical_offset-1 if vertical_offset>-10 else vertical_offset
+        elif key == 106:#j(left)
+            horizontal_offset = horizontal_offset-1 if horizontal_offset>-10 else horizontal_offset
+        elif key == 107:#k(down)
+            vertical_offset = vertical_offset+1 if vertical_offset<10 else vertical_offset
+        elif key == 108:#l(right)
+            horizontal_offset = horizontal_offset+1 if horizontal_offset<10 else horizontal_offset
         elif key != -1 and not opt.pipe:
             log(key)
 
