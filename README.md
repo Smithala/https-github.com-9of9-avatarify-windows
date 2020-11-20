@@ -54,6 +54,8 @@ X | Reset reference frame.
 F | Toggle reference frame search mode.
 R | Mirror reference window.
 T | Mirror output window.
+I/K | Pan camera up/down
+J/L | Pan camera left/right
 
 ## Tips
 
